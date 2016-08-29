@@ -1,0 +1,114 @@
+<%- include ./layout %>
+
+<div class='container'>
+	<div class='row'>
+		<div class='col-sm-3'>
+			<div class='panel panel-primary' style='margin-right:-10px;'>
+				<div class='panel-heading'>
+					<span class='glyphicon glyphicon-user' id='usernameshow'>$nbsp</span>
+					<span >在线成员</span>
+				</div>
+				<div class='panel-body'>
+					<div class='msg-list-body user-content' >
+						<ul>
+							<li style='display:none;'>
+								<a href='#'>
+									<img class='img-thumbnail' src='/images/1.jpg'>
+									<span></span>
+								</a>
+							</li>
+						</ul>
+					</div>
+				</div>
+				<div class='panel-footer'>
+					<div class='btn-group'>
+						<button class='btn btn-primary' type='button'>
+							<span class='glyphicon glyphicon-home'></span>
+						</button>
+						<button class='btn btn-primary' type='button'>
+							<span class='glyphicon glyphicon-user'></span>
+						</button>
+						<button class='btn btn-primary' type='button'>
+							<span class='glyphicon glyphicon-film'></span>
+						</button>
+						<button class='btn btn-primary' type='button'>
+							<span class='glyphicon glyphicon-music'></span>
+						</button>
+						<button class='btn btn-primary' type='button'>
+							<span class='glyphicon glyphicon-heart'></span>
+						</button>
+						<button class='btn btn-primary' type='button'>
+							<span class='glyphicon glyphicon-envelope'></span>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class='col-sm-9'>
+			<div class='panel panel-primary chatbox bb' style='display:none;'>
+				<div class='panel-heading'>
+					<span class='glyphicon glyphicon-comment'>&nbsp</span>
+					<span>聊天室</span>
+					<span class='spanuser' style='float:right;'></span>
+				</div>
+				<div class='panel-body'>
+					<div class='msg-list-body msg-content'>
+						
+					</div>
+				</div>
+				<div class='panel-footer'>
+					<div class='input-group'>
+						<div class='input-group-addon'>
+							<a href='#'>
+								<img src='/images/bq.png'/>
+							</a>
+						</div>
+						<div class='input-group-addon' style='padding-bottom:0px;'>
+							<label style='position:relative;'>
+								<img src='/images/jt.jpg' title='send images' style='cursor:pointer;'/>	
+								<input class='sendImage' type='file' value='images',style='dispaly:none;'/>
+							</label>
+						</div>
+						<input class='form-control msg' type='text' placeholder='请输入聊天内容' onkeydown='javascript:keywordsMsg(event);'/>
+						<span class='input-group-btn '>
+							<button class='btn btn-primary sendMsg' type='button' onclick='change();'>
+								发送/send
+							</button> 
+						</span>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class='modal fade' id='myModal' tabindex='-1'>
+		<div class='modal-dialog'>
+			<div class='modal-content'>
+				<div class='modal-header'>
+					<h4 class='modal-title' id='myModalLabel'>请设置聊天昵称</h4>
+				</div>
+				<div class='modal-body'>
+					<div class='form-group'>
+						<div class='input-group'>
+							<div class='input-group-addon'>
+								昵称
+							</div>
+							<input class='form-control' id='username' type='text' value='小草' onkeydown='javascript:keywordsName(event);' />
+						</div>
+					</div>
+				</div>
+				<div class='modal-footer'>
+					<input class='btn btn-primary' id='btn-setName' type='button' value='应用昵称' />
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src='/js/chat.js'></script>
+<script src='/js/client.js'></script> 
+
+</article>
+</body>
+</html>
+
