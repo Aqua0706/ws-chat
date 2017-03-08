@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title><%= title%></title>
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+
+<body>
+
+    <div class="login default" id="login">
+		<div class="img-user">
+			<img id="img-default" src="images/user.jpeg" width="90px" height="90px">
+		</div>
+		<form action="/user/signin" autocomplete="off" method="POST">
+			<input type="text" placeholder="请输入你的用户名" id="username" name="user[username]" autofocus="autofocus"  required="required">
+			<input type="password" placeholder="请输入你的密码" id="password" name="user[password]"  required="required">
+			<span id="login-check"></span>
+			<input type="submit" id="submit" value="登录">
+			<a href="/signup" id="goRegister" >没有账号？去注册！</a>
+		</form>
+	</div>
+</body>
+
+</html>

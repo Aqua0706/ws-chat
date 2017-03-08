@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= title%></title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/css/login.css">
+</head>
+<body>
+    <div class="register default " id="register">
+        <div class="logo">
+            <img id="sign-logo" src="images/user.jpeg" width="40px" height="40px">
+        </div>
+        <form action="/user/signup" autocomplete="off" method="POST" id="form-reg">
+            <input type="text" name="user[username]" placeholder="请输入你的昵称" min="1" max="6" required="required">
+            <input type="text" name="user[avatar]" placeholder="请输入头像链接" id="uname"   required="required">
+            <!--<i class="icon-refresh" id="check-status"></i>-->
+            <input type="password" name="user[password]" placeholder="请输入你的密码"  id="psw"  required="required">
+            <input type="submit" value="提交注册">
+            <a href="/signin" id="goLogin">已有账号？去登录！</a>
+        </form>
+    </div>
+</body>
+</html>
