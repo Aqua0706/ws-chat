@@ -4,17 +4,17 @@
 
  var mongoose = require('mongoose');
  crypto = require('crypto');
+ var ObjectId = mongoose.Schema.ObjectId;
 
  var UserSchema = new mongoose.Schema({
     username:String,
     password:String,
     salt: String,
     avatar:String,
-    friends:{
-        type: Array,
-        default: []
-    }
- })
+    friends:[{
+        username:String
+    }]
+ });
 
  /**
  * save方法前进行密码哈希化
