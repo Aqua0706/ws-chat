@@ -1,4 +1,5 @@
 var User = require('../app/controllers/user');
+var Message = require('../app/controllers/message');
 
 module.exports = function(app,io){
     //pre handle user   预处理
@@ -17,5 +18,7 @@ module.exports = function(app,io){
 
 
    app.get('/chat',User.signinRequired,User.chat);
+
+   app.post('/getMessageList', Message.getMes);
 
 }

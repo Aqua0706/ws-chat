@@ -16,7 +16,9 @@ function Poplayer(args) {
 Poplayer.instances = {};
 
 Poplayer.prototype.init = function() {
-    var content = this.content instanceof Node && this.content.nodeType == 1 ? this.content.outerHTML : this.content;
+    // var content = this.content instanceof Node && this.content.nodeType == 1 ? this.content.outerHTML : this.content;
+    var content = this.content;
+    // console.log(content);
     var dialogTemplate = '<div class="poplayer-header">' +
         '<div class="poplayer-title">' + this.title + '</div>' +
         '<div class="poplayer-close"> × </div>' +
@@ -58,18 +60,42 @@ Poplayer.prototype.show = function() {
 
     var poplayerHeader = this.dialogNode.getElementsByClassName("poplayer-header")[0],
         poplayerContainer = this.dialogNode,
+        poplayerMessages = this.dialogNode.getElementsByClassName("poplayer-content")[0],
         poplayerClose = this.dialogNode.getElementsByClassName("poplayer-close")[0],
+        inputMes = this.dialogNode.getElementsByClassName("poplayer-input")[0],
         btnConfirm = this.dialogNode.getElementsByClassName("btn-confirm")[0],
-        btnCancel = this.dialogNode.getElementsByClassName("btn-cancel")[0],
+        // btnCancel = this.dialogNode.getElementsByClassName("btn-cancel")[0],
         self = this;
 
-    poplayerClose.onclick = function() {
-        self.close().destroy();
+
+    poplayerHeader.onclick = function() {
+        var dialogNode = self.dialogNode;
+        $(dialogNode).insertAfter($('.poplayer-container:last'));
     }
+
+    poplayerClose.onclick = function(e) {
+        self.close().destroy();
+        e.stopPropagation();
+    }
+
     btnConfirm.onclick = function() {
-        typeof self.onConfirm == 'function' && self.onConfirm();
-        self.close().destroy();
+        // typeof self.onConfirm == 'function' && self.onConfirm();
+        // self.close().destroy();
+        var msgObj = {
+            from: username,
+            to: self.title,
+            content: inputMes.value,
+            time:Date.now()
+        };
+        socket.emit('sendMessageToOne', msgObj);
+        var temp = "<div class='message'><div class='wrap-text'><h5 >" + msgObj.from + "</h5><div>" + filterXSS(msgObj.content) + "<div class='arrow'>" + "</div>" + "</div>" + "</div>" + "<div class='wrap-ri'>" + "<div ><span>" + msgObj.time + "</span></div>" + "</div>" + "<div style='clear:both;'></div>" + "</div>";
+        $(poplayerMessages).append(temp);
+
+
+        $(poplayerMessages).scrollTop($(poplayerMessages)[0].scrollHeight);
+        $(inputMes).val("");
     }
+
     // btnCancel.onclick = function() {
     //     typeof self.onCancel == 'function' && self.onCancel();
     //     self.close().destroy();
@@ -128,6 +154,17 @@ Poplayer.prototype.show = function() {
     return this;
 
 }
+
+/**
+ * 发送消息函数
+ */
+Poplayer.prototype.send = function() {
+    typeof this.onClose == "function" && this.onClose();
+    //document.body.removeChild(this.maskNode);
+    document.body.removeChild(this.dialogNode);
+    return this;
+}
+
 
 /**
  * 弹出层关闭函数

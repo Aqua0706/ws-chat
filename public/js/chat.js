@@ -11,6 +11,16 @@ socket.on('online', function(data) {
 socket.on('showFriendList', function(data) {
     updateFriendsList(data);
 });
+socket.on('toOne', function(msgObj) {
+    var chat_name = msgObj.from;
+    var dialogNode = Poplayer.instances[chat_name].dialogNode;
+    var poplayerMessages = dialogNode.getElementsByClassName("poplayer-content")[0];
+    $(dialogNode).insertAfter($('.poplayer-container:last'));
+
+    var temp = "<div class='message'><div class='wrap-text'><h5 >" + msgObj.from + "</h5><div>" + filterXSS(msgObj.content) + "<div class='arrow'>" + "</div>" + "</div>" + "</div>" + "<div class='wrap-ri'>" + "<div ><span>" + msgObj.time + "</span></div>" + "</div>" + "<div style='clear:both;'></div>" + "</div>";
+    $(poplayerMessages).append(temp);
+    $(poplayerMessages).scrollTop($(poplayerMessages)[0].scrollHeight);
+});
 
 function updateFriendsList(data) {
     var friendsListTemplate = '';
@@ -52,26 +62,73 @@ $('.search-icon').click(function(e) {
     $(".search-input").val("");
 });
 
+
 $('.chat03_content ul').on("double click", 'li', function() {
     var chat_name = $(this).text();
 
     if (Poplayer.instances[chat_name]) {
         //多窗口点击在最上面
-    } else {
-        var socket = window.io.connect();
-        socket.emit('searchChatContent', {
-            from: username,
-            to: chat_name
-        });
-        socket.on('backChatContent', function(content) {
-            console.log(content);
-            var pop = new Poplayer({
-                title: chat_name,
-                isModal: false,
-                content: content
-            })
-            pop.init().show();
+        var dialogNode = Poplayer.instances[chat_name].dialogNode;
+        $(dialogNode).insertAfter($('.poplayer-container:last'));
 
+    } else {
+        // var socket = window.io.connect();
+        // socket.emit('searchChatContent', {
+        //     from: username,
+        //     to: chat_name
+        // });
+        // socket.on('backChatContent', function(content) {
+        // console.log(content);
+        $.ajax({
+            url: '/getMessageList',
+            type: 'POST',
+            data: {
+                from: username,
+                to: chat_name
+            },
+            success: function(mes) {
+                var content = "";
+                mes.forEach(function(message, index) {
+                    content += "<div class='message'><div class='wrap-text'><h5 >" + message.from + "</h5><div>" + filterXSS(message.content) + "<div class='arrow'>" + "</div>" + "</div>" + "</div>" + "<div class='wrap-ri'>" + "<div ><span>" + message.time + "</span></div>" + "</div>" + "<div style='clear:both;'></div>" + "</div>";
+                });
+                var pop = new Poplayer({
+                    title: chat_name,
+                    isModal: false,
+                    content: content,
+                });
+                pop.init().show();
+            }
         })
     }
+});
+
+//退出登录
+$('.chat_close').click(function(){
+    var pop = '<div class="poplayer-mask"></div><div class="danger_layer"><div class="danger_layer_header">' +
+        '<div>提示</div>' +
+        '<div class="danger_layer_close"> × </div>' +
+        '</div>' +
+        '<div class="danger_layer_content">您还有会话没有关闭，确认退出chat吗？</div>' +
+        '<div class="danger_layer_footer">' +
+        '<button class="btn btn-confirm">确定</button>' +
+        '<button class="btn btn-cancel">取消</button>' +
+        '</div>' +
+        '</div></div>';
+    $('body').append(pop);
+
+    $('.danger_layer_close').click(function(){
+        $('.poplayer-mask').remove();
+        $('.danger_layer').remove();
+    });
+
+    $('.danger_layer_footer .btn-cancel').click(function(){
+        $('.poplayer-mask').remove();
+        $('.danger_layer').remove();
+    });
+
+    $('.danger_layer_footer .btn-confirm').click(function(){
+        socket.emit('disconnect',username);
+        window.location = "/signin";
+    })
+
 })

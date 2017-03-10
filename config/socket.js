@@ -1,9 +1,12 @@
 var User = require('../app/models/user.js');
+var Message = require('../app/models/message.js');
+var _ = require('underscore');
 
-module.exports = function(users,io) {
+module.exports = function(users, io) {
     io.sockets.on('connection', function(socket) {
         socket.on('online', function(data) {
             socket.name = data.user;
+            console.log(socket.name);
             if (users.indexOf(data.user) < 0) {
                 users.push(data.user);
             }
@@ -12,20 +15,54 @@ module.exports = function(users,io) {
                 user: data.user
             });
 
-            User.findOne({username:data.user},function(err,user){
-                if(err){
+            User.findOne({
+                username: data.user
+            }, function(err, user) {
+                if (err) {
                     console.log(err);
-                }   
-                socket.emit('showFriendList',user.friends);
+                }
+                socket.emit('showFriendList', user.friends);
             })
         });
 
+        socket.on('disconnect',function(username){
+            var user = _.findWhere(io.sockets.sockets,{
+                name:username
+            });
+            if(user){
+                users = _.without(users,user);
+                //socket.broadcast.emit('loginInfo',username + '下线了')
+                console.log('我下线啦');
+            }
+        });
+
         socket.on('say', function(data) {
+            //插入数据
+
+            //向对方发起一个say的事件
             console.log(data);
         });
 
-        socket.on('searchChatContent',function(data){
-            socket.emit('backChatContent',"大家好")
-        })
+        socket.on('sendMessageToOne', function(msgObj) {
+            var toSocket = _.findWhere(io.sockets.sockets, {
+                name: msgObj.to
+            });
+            console.log(toSocket);
+
+            //插入数据
+            var message = new Message(msgObj);
+            message.save(function(err, mes) {
+                if (err) {
+                    console.log(err);
+                }
+
+                toSocket.emit('toOne', msgObj);
+
+                //向对方发起一个say的事件
+                console.log("成功");
+
+            });
+        });
+
     });
 }

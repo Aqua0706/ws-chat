@@ -1,6 +1,6 @@
 var mongoose = require('mongoose');
 
 var MessageSchema = require('../schemas/message');
-var Message = mongoose.model('User',MessageSchema);
+var Message = mongoose.model('Message',MessageSchema);
 
-module.export = Message;
+module.exports = Message;
