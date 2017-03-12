@@ -1,12 +1,23 @@
 var socket = window.io.connect();
 var username = $('div.header input')[0].value;
+var users=[]; //存储在线用户
+var userfriends=[];//存储好友
 
 
 socket.emit('online', {
     user: username
 });
-socket.on('online', function(data) {
-    console.log(data.users);
+socket.on('new_user_online', function(data) {
+    //在线的人
+    users = data.users;
+    console.log(users);
+    console.log(userfriends);
+    //是好友
+    users.forEach(function(item,index){
+        if(userfriends.indexOf(item)>-1){
+            $('ul li:nth(0) a').removeClass('offline');
+        }
+    }) 
 });
 socket.on('showFriendList', function(data) {
     updateFriendsList(data);
@@ -23,15 +34,21 @@ socket.on('toOne', function(msgObj) {
 });
 
 function updateFriendsList(data) {
+    var friends=[];
     var friendsListTemplate = '';
     var len = data.length || 0;
     if (len === 0) {
         friendsListTemplate = "迎使用WS_Chat，快点添加好友，开心聊天吧!"
     };
     for (var i = 0; i < len; i++) {
-        friendsListTemplate += '<li ><a href="#" class="chat03_name">' + data[i].username + '</a></li>';
+        friends.push(data[i].username);
+        if (users.indexOf(data[i].username) < 0) {
+            friendsListTemplate += '<li ><a href="#" class="chat03_name offline">' + data[i].username + '</a></li>';
+        } else {
+            friendsListTemplate += '<li ><a href="#" class="chat03_name">' + data[i].username + '</a></li>';
+        }
     }
-
+    userfriends = friends;
     $('.chat03_content ul').html(friendsListTemplate);
 };
 
@@ -103,7 +120,7 @@ $('.chat03_content ul').on("double click", 'li', function() {
 });
 
 //退出登录
-$('.chat_close').click(function(){
+$('.chat_close').click(function() {
     var pop = '<div class="poplayer-mask"></div><div class="danger_layer"><div class="danger_layer_header">' +
         '<div>提示</div>' +
         '<div class="danger_layer_close"> × </div>' +
@@ -121,13 +138,16 @@ $('.chat_close').click(function(){
         $('.danger_layer').remove();
     });
 
-    $('.danger_layer_footer .btn-cancel').click(function(){
+    $('.danger_layer_footer .btn-cancel').click(function() {
         $('.poplayer-mask').remove();
         $('.danger_layer').remove();
     });
 
-    $('.danger_layer_footer .btn-confirm').click(function(){
-        socket.emit('disconnect',username);
+    $('.danger_layer_footer .btn-confirm').click(function() {
+
+        socket.emit('self_disconnect', {
+            username: username
+        });
         window.location = "/signin";
     })
 

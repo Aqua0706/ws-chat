@@ -33,6 +33,9 @@ app.use(session({
         url: dbUrl,
         collection: 'sessions'
     }),
+    cookie:{
+        maxAge:60*10000*30,//过期时间 毫秒
+    },
     resave: false,
     saveUninitialized: true
 }))

@@ -212,13 +212,18 @@ body {
     left: 40px;
     display: block;
 }
+.offline{
+    opacity: 0.4;
+}
 
 .chat03_content ul {
-
+    -webkit-padding-start:0px;
 }
 
 .chat03_content ul li {
     padding: 3px 6px;
+    border-bottom: 1px solid #9bc3a9;
+    list-style: none;
 }
 
 .chat03_content ul li.hover {

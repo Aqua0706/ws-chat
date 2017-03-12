@@ -7,10 +7,12 @@ module.exports = function(users, io) {
         socket.on('online', function(data) {
             socket.name = data.user;
             console.log(socket.name);
+            console.log('dfy');
             if (users.indexOf(data.user) < 0) {
                 users.push(data.user);
-            }
-            io.sockets.emit('online', {
+            };
+
+            socket.broadcast.emit('new_user_online',{
                 users: users,
                 user: data.user
             });
@@ -22,25 +24,19 @@ module.exports = function(users, io) {
                     console.log(err);
                 }
                 socket.emit('showFriendList', user.friends);
-            })
-        });
-
-        socket.on('disconnect',function(username){
-            var user = _.findWhere(io.sockets.sockets,{
-                name:username
             });
-            if(user){
-                users = _.without(users,user);
-                //socket.broadcast.emit('loginInfo',username + '下线了')
-                console.log('我下线啦');
-            }
         });
 
-        socket.on('say', function(data) {
-            //插入数据
+        socket.on('self_disconnect', function(mes) {
 
-            //向对方发起一个say的事件
-            console.log(data);
+            var user = _.findWhere(users, mes.username);
+
+            if (user) {
+                users = _.without(users, user);
+                // _.without(io.sockets.sockets, user);
+                console.log('我下线啦0');
+                //socket.broadcast.emit('loginInfo',username + '下线了')
+            }
         });
 
         socket.on('sendMessageToOne', function(msgObj) {

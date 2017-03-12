@@ -3,6 +3,8 @@ var User = require('../models/user');
 
 //showsignup
 exports.showSignup = function(req, res) {
+    //退出的当前账号时，重定向，并删除session
+    delete req.session.user;
     res.render('signup', {
         title: '注册页面'
     })
@@ -10,6 +12,7 @@ exports.showSignup = function(req, res) {
 
 //showsignin
 exports.showSignin = function(req, res) {
+    delete req.session.user;
     res.render('signin', {
         title: '登陆页面'
     })
@@ -106,7 +109,7 @@ exports.addFriend = function(req, res) {
                     status: 0,
                     Info: newfriend + " 已是您的好友！"
                 })
-            }else{
+            } else {
                 user_now.friends.push({
                     username: newfriend
                 });
