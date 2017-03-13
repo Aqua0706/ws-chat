@@ -1,7 +1,7 @@
 var socket = window.io.connect();
 var username = $('div.header input')[0].value;
-var users=[]; //存储在线用户
-var userfriends=[];//存储好友
+var users = []; //存储在线用户
+var userfriends = []; //存储好友
 
 
 socket.emit('online', {
@@ -13,28 +13,37 @@ socket.on('new_user_online', function(data) {
     console.log(users);
     console.log(userfriends);
     //是好友
-    users.forEach(function(item,index){
-        if(userfriends.indexOf(item)>-1){
-            $('ul li:nth(0) a').removeClass('offline');
+    users.forEach(function(item, index) {
+        if (userfriends.indexOf(item) > -1) {
+            $('ul li:nth(' + index + ') a').removeClass('offline');
         }
-    }) 
-});
-socket.on('showFriendList', function(data) {
-    updateFriendsList(data);
+    });
+    //保证顺序
+    socket.on('showFriendList', function(data) {
+        updateFriendsList(data);
+    });
 });
 socket.on('toOne', function(msgObj) {
     var chat_name = msgObj.from;
-    var dialogNode = Poplayer.instances[chat_name].dialogNode;
-    var poplayerMessages = dialogNode.getElementsByClassName("poplayer-content")[0];
-    $(dialogNode).insertAfter($('.poplayer-container:last'));
+    var index = userfriends.indexOf(chat_name);
+    //如果没有建立对话框，模拟点击事件，注意js事件异步
+    if (!Poplayer.instances[chat_name]) {
+        $('.chat03_content ul li:nth(' + index + ')').click(function() {
+            //
+        });
+    }else{   
+        var dialogNode = Poplayer.instances[chat_name].dialogNode;
+        var poplayerMessages = dialogNode.getElementsByClassName("poplayer-content")[0];
+        $(dialogNode).insertAfter($('.poplayer-container:last'));
 
-    var temp = "<div class='message'><div class='wrap-text'><h5 >" + msgObj.from + "</h5><div>" + filterXSS(msgObj.content) + "<div class='arrow'>" + "</div>" + "</div>" + "</div>" + "<div class='wrap-ri'>" + "<div ><span>" + msgObj.time + "</span></div>" + "</div>" + "<div style='clear:both;'></div>" + "</div>";
-    $(poplayerMessages).append(temp);
-    $(poplayerMessages).scrollTop($(poplayerMessages)[0].scrollHeight);
+        var temp = "<div class='message'><div class='wrap-text'><h5 >" + msgObj.from + "</h5><div>" + filterXSS(msgObj.content) + "<div class='arrow'>" + "</div>" + "</div>" + "</div>" + "<div class='wrap-ri'>" + "<div ><span>" + msgObj.time + "</span></div>" + "</div>" + "<div style='clear:both;'></div>" + "</div>";
+        $(poplayerMessages).append(temp);
+        $(poplayerMessages).scrollTop($(poplayerMessages)[0].scrollHeight);
+    }
 });
 
 function updateFriendsList(data) {
-    var friends=[];
+    var friends = [];
     var friendsListTemplate = '';
     var len = data.length || 0;
     if (len === 0) {
@@ -57,6 +66,8 @@ $('.search-icon').click(function(e) {
     var frName = $(".search-input").val();
     if (frName == "" || frName == null) {
         alert('请填写好友的账号');
+    } else if (frName == username) {
+        slert('不能添加叽叽为好友~');
     } else {
         $.ajax({
             url: '/user/addfriend',
@@ -133,7 +144,7 @@ $('.chat_close').click(function() {
         '</div></div>';
     $('body').append(pop);
 
-    $('.danger_layer_close').click(function(){
+    $('.danger_layer_close').click(function() {
         $('.poplayer-mask').remove();
         $('.danger_layer').remove();
     });

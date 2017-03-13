@@ -12,7 +12,7 @@ module.exports = function(users, io) {
                 users.push(data.user);
             };
 
-            socket.broadcast.emit('new_user_online',{
+            io.emit('new_user_online',{
                 users: users,
                 user: data.user
             });
