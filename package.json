@@ -20,7 +20,11 @@
     "static-favicon": "^2.0.0-alpha",
     "underscore": "^1.8.3"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "css-loader": "^0.27.3",
+    "style-loader": "^0.13.2",
+    "webpack": "^2.2.1"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },

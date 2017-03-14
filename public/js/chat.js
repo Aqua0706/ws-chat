@@ -1,3 +1,7 @@
+//webpack支持commonJS风格的代码，所以可以识别require关键字
+var Poplayer = require("./poplayer");
+require('../css/chat.css');
+
 var socket = window.io.connect();
 var username = $('div.header input')[0].value;
 var users = []; //存储在线用户

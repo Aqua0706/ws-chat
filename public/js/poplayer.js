@@ -184,3 +184,7 @@ Poplayer.prototype.destroy = function() {
     delete Poplayer.instances[this.title];
     return null;
 }
+
+
+module.exports = Poplayer;
+
